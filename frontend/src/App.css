@@ -1,0 +1,100 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f4f7f5;
+  color: #1d2b24;
+}
+
+.app {
+  min-height: 100vh;
+}
+
+header {
+  text-align: center;
+  padding: 45px 20px;
+  background: #163b2b;
+  color: white;
+}
+
+header h1 {
+  font-size: 42px;
+  margin: 0 0 10px;
+}
+
+header p {
+  font-size: 18px;
+}
+
+main {
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 20px;
+}
+
+.card,
+.results {
+  background: white;
+  padding: 30px;
+  border-radius: 16px;
+  margin-bottom: 25px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+}
+
+label {
+  display: block;
+  margin-top: 18px;
+  margin-bottom: 7px;
+  font-weight: bold;
+}
+
+input,
+select {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 16px;
+}
+
+button {
+  width: 100%;
+  margin-top: 25px;
+  padding: 14px;
+  border: none;
+  border-radius: 8px;
+  background: #1f7a4d;
+  color: white;
+  font-size: 17px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.results-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.results-grid div {
+  padding: 20px;
+  background: #eef6f0;
+  border-radius: 10px;
+  font-size: 18px;
+}
+
+.results-grid strong {
+  display: block;
+  font-size: 28px;
+  margin-top: 8px;
+}
+
+.note {
+  margin-top: 25px;
+  font-size: 14px;
+  color: #666;
+}
