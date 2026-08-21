@@ -8,9 +8,22 @@ app = Flask(__name__)
 CORS(app)
 
 # Load trained AI model
-model = joblib.load(
-    os.path.join(os.path.dirname(__file__), "pyrolysis_model.pkl")
-)
+model = joblib.load("pyrolysis_model.pkl")
+
+FEATURES = [
+    "HDPE_wt_percent",
+    "LDPE_wt_percent",
+    "PP_wt_percent",
+    "PS_wt_percent",
+    "PVC_wt_percent",
+    "PET_wt_percent",
+    "Temperature_C",
+    "Heating_Rate_C_per_min",
+    "Particle_Size_mm",
+    "Feed_Size_g",
+    "Catalyst",
+    "Reactor_Type"
+]
 
 
 @app.route("/")
@@ -24,8 +37,19 @@ def predict():
     try:
         data = request.get_json()
 
-        # Create input DataFrame using the same
-        # features used while training the model
+        if not data:
+            return jsonify({"error": "No JSON data received"}), 400
+
+        # Check required fields
+        missing = [feature for feature in FEATURES if feature not in data]
+
+        if missing:
+            return jsonify({
+                "error": "Missing input fields",
+                "missing": missing
+            }), 400
+
+        # Create model input
         input_data = pd.DataFrame([{
             "HDPE_wt_percent": float(data["HDPE_wt_percent"]),
             "LDPE_wt_percent": float(data["LDPE_wt_percent"]),
@@ -39,7 +63,7 @@ def predict():
             "Feed_Size_g": float(data["Feed_Size_g"]),
             "Catalyst": data["Catalyst"],
             "Reactor_Type": data["Reactor_Type"]
-        }])
+        }], columns=FEATURES)
 
         # AI prediction
         oil_prediction = model.predict(input_data)[0]
@@ -49,12 +73,12 @@ def predict():
         })
 
     except Exception as e:
-
-        print("Prediction Error:", str(e))
+        print("Prediction error:", str(e))
 
         return jsonify({
-            "error": str(e)
-        }), 400
+            "error": "Prediction failed",
+            "details": str(e)
+        }), 500
 
 
 if __name__ == "__main__":
