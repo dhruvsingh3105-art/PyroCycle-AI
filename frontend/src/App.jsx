@@ -56,18 +56,21 @@ function App() {
         }
       );
 
+      const data = await response.json();
+
       if (!response.ok) {
-        throw new Error("Prediction failed");
+        throw new Error(
+          data.details || data.error || "Prediction failed"
+        );
       }
 
-      const data = await response.json();
       setResult(data);
     } catch (error) {
-      alert("Unable to connect to AI backend.");
-      console.error(error);
+      console.error("Prediction error:", error);
+      alert("AI Error: " + error.message);
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   };
 
   return (
@@ -200,13 +203,17 @@ function App() {
               <div>
                 🛢️ Oil
                 <strong>
-                  {result.oil ?? result.Oil_Yield_percent ?? result.prediction}%
+                  {result.oil !== undefined
+                    ? result.oil
+                    : "N/A"}
+                  %
                 </strong>
               </div>
             </div>
 
             <p className="note">
-              AI-based oil yield estimate using the trained pyrolysis model.
+              AI-based oil yield estimate using the trained
+              pyrolysis model.
             </p>
           </section>
         )}
