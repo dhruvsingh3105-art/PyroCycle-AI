@@ -6,6 +6,7 @@ import pandas as pd
 app = Flask(__name__)
 CORS(app)
 
+# Load the new 325-row AI model
 model = joblib.load("pyrolysis_model.pkl")
 
 
@@ -18,8 +19,8 @@ def predict():
     quantity = float(data["quantity"])
     temperature = float(data["temperature"])
 
-    # Set plastic composition
-    plastics = {
+    # Create plastic composition
+    composition = {
         "HDPE": [100, 0, 0, 0, 0, 0],
         "LDPE": [0, 100, 0, 0, 0, 0],
         "PP":   [0, 0, 100, 0, 0, 0],
@@ -28,16 +29,25 @@ def predict():
         "PET":  [0, 0, 0, 0, 0, 100]
     }
 
-    composition = plastics.get(plastic_type, [100, 0, 0, 0, 0, 0])
+    if plastic_type not in composition:
+        return jsonify({"error": "Unsupported plastic type"}), 400
 
+    values = composition[plastic_type]
+
+    # Model input
     input_data = pd.DataFrame([[
-        *composition,
-        temperature,
-        10,          # default heating rate
-        3,           # default particle size
-        quantity,
-        "None",      # catalyst
-        "Batch"      # reactor type
+        values[0],              # HDPE
+        values[1],              # LDPE
+        values[2],              # PP
+        values[3],              # PS
+        values[4],              # PVC
+        values[5],              # PET
+        temperature,            # Temperature
+        10,                     # Heating rate
+        3,                      # Particle size
+        quantity * 1000,        # Feed size (kg -> g)
+        "None",                 # Catalyst
+        "Unknown"               # Reactor type
     ]], columns=[
         "HDPE_wt_percent",
         "LDPE_wt_percent",
@@ -53,10 +63,11 @@ def predict():
         "Reactor_Type"
     ])
 
-    oil = model.predict(input_data)[0]
+    # AI prediction
+    oil_prediction = model.predict(input_data)[0]
 
     return jsonify({
-        "oil": round(float(oil), 2)
+        "oil": round(float(oil_prediction), 2)
     })
 
 
@@ -66,4 +77,4 @@ def home():
 
 
 if __name__ == "__main__":
-    app.run()
+    app.run(debug=True)
