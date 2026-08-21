@@ -7,7 +7,6 @@ app = Flask(__name__)
 CORS(app)
 
 model = joblib.load("pyrolysis_model.pkl")
-encoder = joblib.load("plastic_encoder.pkl")
 
 
 @app.route("/predict", methods=["POST"])
@@ -18,29 +17,46 @@ def predict():
     plastic_type = data["plastic_type"]
     quantity = float(data["quantity"])
     temperature = float(data["temperature"])
-    time = float(data["time"])
 
-    plastic_encoded = encoder.transform([plastic_type])[0]
+    # Set plastic composition
+    plastics = {
+        "HDPE": [100, 0, 0, 0, 0, 0],
+        "LDPE": [0, 100, 0, 0, 0, 0],
+        "PP":   [0, 0, 100, 0, 0, 0],
+        "PS":   [0, 0, 0, 100, 0, 0],
+        "PVC":  [0, 0, 0, 0, 100, 0],
+        "PET":  [0, 0, 0, 0, 0, 100]
+    }
+
+    composition = plastics.get(plastic_type, [100, 0, 0, 0, 0, 0])
 
     input_data = pd.DataFrame([[
-        plastic_encoded,
-        quantity,
+        *composition,
         temperature,
-        time
+        10,          # default heating rate
+        3,           # default particle size
+        quantity,
+        "None",      # catalyst
+        "Batch"      # reactor type
     ]], columns=[
-        "Plastic_Type",
-        "Quantity_kg",
+        "HDPE_wt_percent",
+        "LDPE_wt_percent",
+        "PP_wt_percent",
+        "PS_wt_percent",
+        "PVC_wt_percent",
+        "PET_wt_percent",
         "Temperature_C",
-        "Time_min"
+        "Heating_Rate_C_per_min",
+        "Particle_Size_mm",
+        "Feed_Size_g",
+        "Catalyst",
+        "Reactor_Type"
     ])
 
-    prediction = model.predict(input_data)[0]
+    oil = model.predict(input_data)[0]
 
     return jsonify({
-        "oil": round(float(prediction[0]), 2),
-        "gas": round(float(prediction[1]), 2),
-        "wax": round(float(prediction[2]), 2),
-        "char": round(float(prediction[3]), 2)
+        "oil": round(float(oil), 2)
     })
 
 
@@ -50,4 +66,4 @@ def home():
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run()
