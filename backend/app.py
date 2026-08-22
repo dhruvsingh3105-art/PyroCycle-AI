@@ -2,190 +2,114 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 import joblib
 import pandas as pd
-import os
 
 app = Flask(__name__)
 CORS(app)
 
-# -----------------------------------------
-# LOAD TRAINED AI MODEL
-# -----------------------------------------
-
+# Your REAL 325-row oil-yield model
 model = joblib.load("pyrolysis_model.pkl")
 
-FEATURES = [
-    "HDPE_wt_percent",
-    "LDPE_wt_percent",
-    "PP_wt_percent",
-    "PS_wt_percent",
-    "PVC_wt_percent",
-    "PET_wt_percent",
-    "Temperature_C",
-    "Heating_Rate_C_per_min",
-    "Particle_Size_mm",
-    "Feed_Size_g",
-    "Catalyst",
-    "Reactor_Type"
-]
 
-
-# -----------------------------------------
-# HOME
-# -----------------------------------------
-
-@app.route("/", methods=["GET"])
+@app.route("/")
 def home():
     return "PyroCycle AI Backend is running!"
 
 
-# -----------------------------------------
-# AI PREDICTION
-# -----------------------------------------
-
 @app.route("/predict", methods=["POST"])
 def predict():
 
-    try:
+    data = request.json
 
-        data = request.get_json()
+    # Inputs from frontend
+    plastic_type = data.get("plastic_type", "HDPE")
+    temperature = float(data.get("temperature", 450))
+    heating_rate = float(data.get("heating_rate", 10))
+    particle_size = float(data.get("particle_size", 1))
+    feed_size = float(data.get("feed_size", 10))
+    catalyst = data.get("catalyst", "None")
+    reactor_type = data.get("reactor_type", "Fixed Bed")
 
-        if not data:
-            return jsonify({
-                "success": False,
-                "error": "No JSON data received"
-            }), 400
+    # Plastic composition
+    composition = {
+        "HDPE": [100, 0, 0, 0, 0, 0],
+        "LDPE": [0, 100, 0, 0, 0, 0],
+        "PP":   [0, 0, 100, 0, 0, 0],
+        "PS":   [0, 0, 0, 100, 0, 0],
+        "PVC":  [0, 0, 0, 0, 100, 0],
+        "PET":  [0, 0, 0, 0, 0, 100]
+    }
 
+    if plastic_type not in composition:
+        plastic_type = "HDPE"
 
-        # ---------------------------------
-        # CHECK REQUIRED FIELDS
-        # ---------------------------------
+    comp = composition[plastic_type]
 
-        missing = [
-            feature
-            for feature in FEATURES
-            if feature not in data
-        ]
+    # Create input matching the 325-row model
+    input_data = pd.DataFrame([[
+        comp[0],
+        comp[1],
+        comp[2],
+        comp[3],
+        comp[4],
+        comp[5],
+        temperature,
+        heating_rate,
+        particle_size,
+        feed_size,
+        catalyst,
+        reactor_type
+    ]], columns=[
+        "HDPE_wt_percent",
+        "LDPE_wt_percent",
+        "PP_wt_percent",
+        "PS_wt_percent",
+        "PVC_wt_percent",
+        "PET_wt_percent",
+        "Temperature_C",
+        "Heating_Rate_C_per_min",
+        "Particle_Size_mm",
+        "Feed_Size_g",
+        "Catalyst",
+        "Reactor_Type"
+    ])
 
-        if missing:
+    # REAL AI prediction from 325-row literature model
+    oil = float(model.predict(input_data)[0])
 
-            return jsonify({
-                "success": False,
-                "error": "Missing input fields",
-                "missing": missing
-            }), 400
+    # Keep within physical percentage range
+    oil = max(0, min(oil, 100))
 
+    # Remaining product fraction
+    remaining = 100 - oil
 
-        # ---------------------------------
-        # CREATE MODEL INPUT
-        # ---------------------------------
+    # Demonstration estimates based on plastic type.
+    # These are NOT independently trained predictions.
+    ratios = {
+        "HDPE": {"gas": 0.35, "wax": 0.45, "char": 0.20},
+        "LDPE": {"gas": 0.30, "wax": 0.50, "char": 0.20},
+        "PP":   {"gas": 0.45, "wax": 0.40, "char": 0.15},
+        "PS":   {"gas": 0.20, "wax": 0.60, "char": 0.20},
+        "PVC":  {"gas": 0.40, "wax": 0.30, "char": 0.30},
+        "PET":  {"gas": 0.30, "wax": 0.20, "char": 0.50}
+    }
 
-        input_data = pd.DataFrame([{
+    ratio = ratios[plastic_type]
 
-            "HDPE_wt_percent":
-                float(data["HDPE_wt_percent"]),
+    gas = remaining * ratio["gas"]
+    wax = remaining * ratio["wax"]
+    char = remaining * ratio["char"]
 
-            "LDPE_wt_percent":
-                float(data["LDPE_wt_percent"]),
+    return jsonify({
+        "oil": round(oil, 2),
+        "gas": round(gas, 2),
+        "wax": round(wax, 2),
+        "char": round(char, 2),
+        "note": "Oil is predicted by the 325-row literature-trained AI model. Gas, wax and char are prototype estimates."
+    })
 
-            "PP_wt_percent":
-                float(data["PP_wt_percent"]),
-
-            "PS_wt_percent":
-                float(data["PS_wt_percent"]),
-
-            "PVC_wt_percent":
-                float(data["PVC_wt_percent"]),
-
-            "PET_wt_percent":
-                float(data["PET_wt_percent"]),
-
-            "Temperature_C":
-                float(data["Temperature_C"]),
-
-            "Heating_Rate_C_per_min":
-                float(data["Heating_Rate_C_per_min"]),
-
-            "Particle_Size_mm":
-                float(data["Particle_Size_mm"]),
-
-            "Feed_Size_g":
-                float(data["Feed_Size_g"]),
-
-            "Catalyst":
-                str(data["Catalyst"]),
-
-            "Reactor_Type":
-                str(data["Reactor_Type"])
-
-        }], columns=FEATURES)
-
-
-        # ---------------------------------
-        # AI PREDICTION
-        # ---------------------------------
-
-        oil_prediction = model.predict(input_data)[0]
-
-        oil_prediction = float(oil_prediction)
-
-
-        # Keep percentage within valid range
-        oil_prediction = max(
-            0,
-            min(100, oil_prediction)
-        )
-
-
-        # ---------------------------------
-        # RETURN RESULT
-        # ---------------------------------
-
-        return jsonify({
-
-            "success": True,
-
-            "oil": round(
-                oil_prediction,
-                2
-            )
-
-        })
-
-
-    except Exception as e:
-
-        print(
-            "Prediction error:",
-            str(e)
-        )
-
-        return jsonify({
-
-            "success": False,
-
-            "error":
-                "Prediction failed",
-
-            "details":
-                str(e)
-
-        }), 500
-
-
-# -----------------------------------------
-# RUN SERVER
-# -----------------------------------------
 
 if __name__ == "__main__":
-
-    port = int(
-        os.environ.get(
-            "PORT",
-            5000
-        )
-    )
-
     app.run(
         host="0.0.0.0",
-        port=port
+        port=10000
     )
