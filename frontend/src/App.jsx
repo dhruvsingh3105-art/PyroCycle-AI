@@ -4,30 +4,23 @@ import "./App.css";
 function App() {
   const [plastic, setPlastic] = useState("HDPE");
 
-  const [values, setValues] = useState({
-    HDPE: 100,
-    LDPE: 0,
-    PP: 0,
-    PS: 0,
-    PVC: 0,
-    PET: 0,
-    temperature: 450,
-    heatingRate: 10,
-    particleSize: 1,
-    feedSize: 10,
-    catalyst: "None",
-    reactorType: "Fixed Bed",
-  });
+  const [hdpe, setHdpe] = useState(100);
+  const [ldpe, setLdpe] = useState(0);
+  const [pp, setPp] = useState(0);
+  const [ps, setPs] = useState(0);
+  const [pvc, setPvc] = useState(0);
+  const [pet, setPet] = useState(0);
+
+  const [temperature, setTemperature] = useState(450);
+  const [heatingRate, setHeatingRate] = useState(10);
+  const [particleSize, setParticleSize] = useState(1);
+  const [feedSize, setFeedSize] = useState(10);
+
+  const [catalyst, setCatalyst] = useState("None");
+  const [reactorType, setReactorType] = useState("Fixed Bed");
 
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
-
-  const handleChange = (field, value) => {
-    setValues((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
-  };
 
   const predict = async () => {
     setLoading(true);
@@ -42,145 +35,141 @@ function App() {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            HDPE_wt_percent: Number(values.HDPE),
-            LDPE_wt_percent: Number(values.LDPE),
-            PP_wt_percent: Number(values.PP),
-            PS_wt_percent: Number(values.PS),
-            PVC_wt_percent: Number(values.PVC),
-            PET_wt_percent: Number(values.PET),
-            Temperature_C: Number(values.temperature),
-            Heating_Rate_C_per_min: Number(values.heatingRate),
-            Particle_Size_mm: Number(values.particleSize),
-            Feed_Size_g: Number(values.feedSize),
-            Catalyst: values.catalyst,
-            Reactor_Type: values.reactorType,
+            HDPE_wt_percent: Number(hdpe),
+            LDPE_wt_percent: Number(ldpe),
+            PP_wt_percent: Number(pp),
+            PS_wt_percent: Number(ps),
+            PVC_wt_percent: Number(pvc),
+            PET_wt_percent: Number(pet),
+            Temperature_C: Number(temperature),
+            Heating_Rate_C_per_min: Number(heatingRate),
+            Particle_Size_mm: Number(particleSize),
+            Feed_Size_g: Number(feedSize),
+            Catalyst: catalyst,
+            Reactor_Type: reactorType,
           }),
         }
       );
 
       if (!response.ok) {
-        throw new Error("Prediction failed");
+        throw new Error("Prediction request failed");
       }
 
       const data = await response.json();
       setResult(data);
     } catch (error) {
-      alert("Unable to connect to PyroCycle AI backend.");
+      alert(
+        "Unable to connect to the AI backend. Please make sure the backend is running."
+      );
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   };
-
-  const plasticInputs = ["HDPE", "LDPE", "PP", "PS", "PVC", "PET"];
 
   return (
     <div className="app">
 
-      {/* Background decoration */}
-      <div className="glow glow-one"></div>
-      <div className="glow glow-two"></div>
-      <div className="grid-background"></div>
-
       {/* HEADER */}
       <header className="header">
-        <div className="logo">
-          <span className="logo-icon">♻</span>
-          <span>PyroCycle <b>AI</b></span>
+        <div className="brand">
+          <span className="brand-icon">♻</span>
+          <span>PyroCycle <strong>AI</strong></span>
         </div>
 
         <p>AI-powered plastic waste resource recovery</p>
 
-        <div className="header-badges">
-          <span>● AI ENGINE ONLINE</span>
-          <span>325 LITERATURE RECORDS</span>
+        <div className="status-row">
+          <span className="status-pill">
+            <span className="status-dot"></span>
+            AI ENGINE ONLINE
+          </span>
+
+          <span className="status-pill">
+            325 LITERATURE RECORDS
+          </span>
         </div>
       </header>
 
-      <div className="page-layout">
+      {/* CENTERED CONTENT */}
+      <main className="page-container">
 
-        {/* LEFT PANEL */}
-        <aside className="side-panel left-panel">
+        <div className="section-label">
+          AI-POWERED PYROLYSIS INTELLIGENCE
+        </div>
 
-          <div className="side-card hero-side">
-            <div className="orb">
-              ♻
+        <div className="dashboard-grid">
+
+          {/* LEFT SIDEBAR */}
+          <aside className="sidebar left-sidebar">
+
+            <div className="side-card intro-card">
+              <div className="large-icon">♻</div>
+
+              <h3>Waste → Resource</h3>
+
+              <p>
+                Transform plastic waste into valuable energy products
+                using AI-assisted pyrolysis prediction.
+              </p>
             </div>
 
-            <h3>Waste → Resource</h3>
+            <div className="side-card">
 
-            <p>
-              Transform plastic waste into valuable
-              energy products using AI-assisted
-              pyrolysis prediction.
-            </p>
-          </div>
-
-          <div className="side-card">
-
-            <div className="mini-title">
-              <span>01</span>
-              MATERIAL INPUT
-            </div>
-
-            <div className="material-list">
-              <div>
-                <span className="material-dot hdpe"></span>
-                HDPE
+              <div className="card-label">
+                <span>01</span>
+                MATERIAL INPUT
               </div>
 
-              <div>
-                <span className="material-dot ldpe"></span>
-                LDPE
-              </div>
+              <div className="material-list">
+                <div className="material active">
+                  <span></span> HDPE
+                </div>
 
-              <div>
-                <span className="material-dot pp"></span>
-                PP
-              </div>
+                <div className="material">
+                  <span></span> LDPE
+                </div>
 
-              <div>
-                <span className="material-dot ps"></span>
-                PS
+                <div className="material">
+                  <span></span> PP
+                </div>
+
+                <div className="material">
+                  <span></span> PS
+                </div>
               </div>
             </div>
 
-          </div>
-
-          <div className="side-card stat-card">
-
-            <div className="stat-icon">🧠</div>
-
-            <div>
-              <strong>Random Forest</strong>
-              <small>Machine Learning Model</small>
-            </div>
-
-          </div>
-
-        </aside>
-
-
-        {/* CENTER */}
-        <main className="main-content">
-
-          <div className="section-label">
-            AI-POWERED PYROLYSIS INTELLIGENCE
-          </div>
-
-          <section className="prediction-card">
-
-            <div className="card-top">
+            <div className="side-card model-card">
+              <div className="model-icon">🧠</div>
 
               <div>
-                <span className="eyebrow">PREDICTION ENGINE</span>
+                <h4>Random Forest</h4>
+                <p>Machine Learning Model</p>
+              </div>
+            </div>
+
+          </aside>
+
+
+          {/* MAIN PREDICTOR */}
+          <section className="predictor-card">
+
+            <div className="predictor-top">
+
+              <div>
+                <div className="mini-label">
+                  PREDICTION ENGINE
+                </div>
+
                 <h1>AI Pyrolysis Predictor</h1>
+
                 <p>
-                  Configure your feedstock and process parameters
-                  to estimate pyrolysis product yields.
+                  Configure your feedstock and process parameters to
+                  estimate pyrolysis product yields.
                 </p>
               </div>
 
-              <div className="ai-status">
+              <div className="ready-pill">
                 <span></span>
                 AI READY
               </div>
@@ -188,354 +177,340 @@ function App() {
             </div>
 
 
-            {/* Plastic type */}
-            <label>Plastic Type</label>
+            {/* PLASTIC TYPE */}
+            <div className="form-section">
 
-            <select
-              value={plastic}
-              onChange={(e) => {
-                const type = e.target.value;
-                setPlastic(type);
+              <label>Plastic Type</label>
 
-                const updated = {
-                  HDPE: 0,
-                  LDPE: 0,
-                  PP: 0,
-                  PS: 0,
-                  PVC: 0,
-                  PET: 0,
-                  temperature: values.temperature,
-                  heatingRate: values.heatingRate,
-                  particleSize: values.particleSize,
-                  feedSize: values.feedSize,
-                  catalyst: values.catalyst,
-                  reactorType: values.reactorType,
-                };
+              <select
+                value={plastic}
+                onChange={(e) => setPlastic(e.target.value)}
+              >
+                <option>HDPE</option>
+                <option>LDPE</option>
+                <option>PP</option>
+                <option>PS</option>
+                <option>PVC</option>
+                <option>PET</option>
+              </select>
 
-                updated[type] = 100;
-                setValues(updated);
-              }}
-            >
-              {plasticInputs.map((type) => (
-                <option key={type}>{type}</option>
-              ))}
-            </select>
+            </div>
 
 
-            <div className="input-section">
+            {/* POLYMER COMPOSITION */}
+            <div className="section-heading">
 
-              <div className="input-heading">
-                <span>POLYMER COMPOSITION</span>
-                <small>WT %</small>
+              <span>POLYMER COMPOSITION</span>
+              <small>WT %</small>
+
+            </div>
+
+            <div className="form-grid">
+
+              <div className="form-section">
+                <label>HDPE (%)</label>
+                <input
+                  type="number"
+                  value={hdpe}
+                  onChange={(e) => setHdpe(e.target.value)}
+                />
               </div>
 
-              <div className="composition-grid">
+              <div className="form-section">
+                <label>LDPE (%)</label>
+                <input
+                  type="number"
+                  value={ldpe}
+                  onChange={(e) => setLdpe(e.target.value)}
+                />
+              </div>
 
-                {plasticInputs.map((type) => (
-                  <div className="input-group" key={type}>
+              <div className="form-section">
+                <label>PP (%)</label>
+                <input
+                  type="number"
+                  value={pp}
+                  onChange={(e) => setPp(e.target.value)}
+                />
+              </div>
 
-                    <label>{type} (%)</label>
+              <div className="form-section">
+                <label>PS (%)</label>
+                <input
+                  type="number"
+                  value={ps}
+                  onChange={(e) => setPs(e.target.value)}
+                />
+              </div>
 
-                    <input
-                      type="number"
-                      value={values[type]}
-                      min="0"
-                      max="100"
-                      onChange={(e) =>
-                        handleChange(type, e.target.value)
-                      }
-                    />
+              <div className="form-section">
+                <label>PVC (%)</label>
+                <input
+                  type="number"
+                  value={pvc}
+                  onChange={(e) => setPvc(e.target.value)}
+                />
+              </div>
 
-                  </div>
-                ))}
-
+              <div className="form-section">
+                <label>PET (%)</label>
+                <input
+                  type="number"
+                  value={pet}
+                  onChange={(e) => setPet(e.target.value)}
+                />
               </div>
 
             </div>
 
 
-            <div className="input-heading process-heading">
+            {/* PROCESS PARAMETERS */}
+            <div className="section-heading process-heading">
+
               <span>PROCESS PARAMETERS</span>
               <small>EXPERIMENTAL CONDITIONS</small>
+
             </div>
 
+            <div className="form-grid">
 
-            <div className="composition-grid">
-
-              <div className="input-group">
+              <div className="form-section">
                 <label>Temperature (°C)</label>
-
                 <input
                   type="number"
-                  value={values.temperature}
-                  onChange={(e) =>
-                    handleChange("temperature", e.target.value)
-                  }
+                  value={temperature}
+                  onChange={(e) => setTemperature(e.target.value)}
                 />
               </div>
 
-
-              <div className="input-group">
+              <div className="form-section">
                 <label>Heating Rate (°C/min)</label>
-
                 <input
                   type="number"
-                  value={values.heatingRate}
-                  onChange={(e) =>
-                    handleChange("heatingRate", e.target.value)
-                  }
+                  value={heatingRate}
+                  onChange={(e) => setHeatingRate(e.target.value)}
                 />
               </div>
 
-
-              <div className="input-group">
+              <div className="form-section">
                 <label>Particle Size (mm)</label>
-
                 <input
                   type="number"
-                  value={values.particleSize}
-                  onChange={(e) =>
-                    handleChange("particleSize", e.target.value)
-                  }
+                  step="0.1"
+                  value={particleSize}
+                  onChange={(e) => setParticleSize(e.target.value)}
                 />
               </div>
 
-
-              <div className="input-group">
+              <div className="form-section">
                 <label>Feed Size (g)</label>
-
                 <input
                   type="number"
-                  value={values.feedSize}
-                  onChange={(e) =>
-                    handleChange("feedSize", e.target.value)
-                  }
+                  value={feedSize}
+                  onChange={(e) => setFeedSize(e.target.value)}
                 />
               </div>
 
             </div>
 
 
-            <div className="composition-grid">
+            {/* CATALYST / REACTOR */}
+            <div className="form-grid">
 
-              <div className="input-group">
-
+              <div className="form-section">
                 <label>Catalyst</label>
 
                 <select
-                  value={values.catalyst}
-                  onChange={(e) =>
-                    handleChange("catalyst", e.target.value)
-                  }
+                  value={catalyst}
+                  onChange={(e) => setCatalyst(e.target.value)}
                 >
                   <option>None</option>
-                  <option>HZSM-5</option>
                   <option>Zeolite</option>
-                  <option>Silica-Alumina</option>
+                  <option>HZSM-5</option>
+                  <option>FCC</option>
+                  <option>Alumina</option>
                 </select>
-
               </div>
 
-
-              <div className="input-group">
-
+              <div className="form-section">
                 <label>Reactor Type</label>
 
                 <select
-                  value={values.reactorType}
-                  onChange={(e) =>
-                    handleChange("reactorType", e.target.value)
-                  }
+                  value={reactorType}
+                  onChange={(e) => setReactorType(e.target.value)}
                 >
                   <option>Fixed Bed</option>
                   <option>Fluidized Bed</option>
                   <option>Batch Reactor</option>
                   <option>Rotary Kiln</option>
                 </select>
-
               </div>
 
             </div>
 
 
+            {/* PREDICT BUTTON */}
             <button
               className="predict-button"
               onClick={predict}
               disabled={loading}
             >
-              {loading ? (
-                <>
-                  <span className="spinner"></span>
-                  AI PROCESSING...
-                </>
-              ) : (
-                <>
-                  RUN AI PREDICTION
-                  <span>→</span>
-                </>
-              )}
+              {loading ? "AI PROCESSING..." : "Predict Oil Yield"}
+              {!loading && <span>→</span>}
             </button>
 
           </section>
 
 
-          {/* RESULTS */}
+          {/* RIGHT SIDEBAR */}
+          <aside className="sidebar right-sidebar">
 
-          {result && (
+            <div className="side-card">
 
-            <section className="results-card">
-
-              <div className="results-header">
-
-                <div>
-                  <span className="eyebrow">MODEL OUTPUT</span>
-                  <h2>Predicted Product Yield</h2>
-                </div>
-
-                <span className="confidence">
-                  AI ESTIMATE
-                </span>
-
+              <div className="card-label">
+                <span>02</span>
+                PYROLYSIS PROCESS
               </div>
 
+              <div className="process-list">
 
-              <div className="results-grid">
-
-                <div className="result-box oil">
-                  <span className="result-symbol">🛢</span>
-                  <small>OIL</small>
-                  <strong>{result.oil}%</strong>
+                <div className="process-item">
+                  <b>01</b>
+                  <div>
+                    <strong>Plastic Feed</strong>
+                    <small>Waste material</small>
+                  </div>
                 </div>
 
-                <div className="result-box gas">
-                  <span className="result-symbol">🔥</span>
-                  <small>GAS</small>
-                  <strong>{result.gas}%</strong>
+                <div className="process-line"></div>
+
+                <div className="process-item">
+                  <b>02</b>
+                  <div>
+                    <strong>Thermal Conversion</strong>
+                    <small>Controlled heating</small>
+                  </div>
                 </div>
 
-                <div className="result-box wax">
-                  <span className="result-symbol">◆</span>
-                  <small>WAX</small>
-                  <strong>{result.wax}%</strong>
-                </div>
+                <div className="process-line"></div>
 
-                <div className="result-box char">
-                  <span className="result-symbol">●</span>
-                  <small>CHAR</small>
-                  <strong>{result.char}%</strong>
+                <div className="process-item">
+                  <b>03</b>
+                  <div>
+                    <strong>Product Separation</strong>
+                    <small>Oil · Gas · Wax · Char</small>
+                  </div>
                 </div>
 
               </div>
 
-              <p className="result-note">
-                AI-based prototype estimate generated using the trained
-                pyrolysis model and literature-derived process data.
+            </div>
+
+
+            {/* OUTPUT CARD */}
+            <div className="side-card output-card">
+
+              <div className="card-label">
+                <span>03</span>
+                OUTPUT STREAMS
+              </div>
+
+              <div className="output-row">
+                <span>🛢️ Oil</span>
+                <i></i>
+              </div>
+
+              <div className="output-row">
+                <span>🔥 Gas</span>
+                <i></i>
+              </div>
+
+              <div className="output-row">
+                <span>◆ Wax</span>
+                <i></i>
+              </div>
+
+              <div className="output-row">
+                <span>▪ Char</span>
+                <i></i>
+              </div>
+
+            </div>
+
+
+            <div className="side-card circular-card">
+
+              <div className="plant-icon">🌱</div>
+
+              <h3>CIRCULAR ECONOMY</h3>
+
+              <p>
+                Turning plastic waste into useful resources through
+                intelligent prediction.
               </p>
 
-            </section>
-
-          )}
-
-        </main>
-
-
-        {/* RIGHT PANEL */}
-        <aside className="side-panel right-panel">
-
-          <div className="side-card process-card">
-
-            <div className="mini-title">
-              <span>02</span>
-              PYROLYSIS PROCESS
             </div>
 
-            <div className="process-flow">
+          </aside>
 
-              <div className="process-item">
-                <span className="process-number">01</span>
-                <div>
-                  <strong>Plastic Feed</strong>
-                  <small>Waste material</small>
-                </div>
+        </div>
+
+
+        {/* RESULTS */}
+        {result && (
+          <section className="results-card">
+
+            <div className="result-header">
+              <div>
+                <div className="mini-label">AI PREDICTION</div>
+                <h2>Pyrolysis Product Yields</h2>
               </div>
 
-              <div className="flow-line"></div>
+              <span className="result-badge">
+                MODEL OUTPUT
+              </span>
+            </div>
 
-              <div className="process-item">
-                <span className="process-number">02</span>
-                <div>
-                  <strong>Thermal Conversion</strong>
-                  <small>Controlled heating</small>
-                </div>
+            <div className="results-grid">
+
+              <div className="result-box oil">
+                <span>🛢️</span>
+                <small>OIL</small>
+                <strong>{result.oil ?? result.Oil_Yield_percent ?? 0}%</strong>
               </div>
 
-              <div className="flow-line"></div>
+              <div className="result-box gas">
+                <span>🔥</span>
+                <small>GAS</small>
+                <strong>{result.gas ?? result.Gas_Yield_percent ?? 0}%</strong>
+              </div>
 
-              <div className="process-item">
-                <span className="process-number">03</span>
-                <div>
-                  <strong>Product Separation</strong>
-                  <small>Oil • Gas • Wax • Char</small>
-                </div>
+              <div className="result-box wax">
+                <span>◆</span>
+                <small>WAX</small>
+                <strong>{result.wax ?? result.Wax_Yield_percent ?? 0}%</strong>
+              </div>
+
+              <div className="result-box char">
+                <span>▪</span>
+                <small>CHAR</small>
+                <strong>{result.char ?? result.Char_Yield_percent ?? 0}%</strong>
               </div>
 
             </div>
 
-          </div>
-
-
-          <div className="side-card output-preview">
-
-            <div className="mini-title">
-              <span>03</span>
-              OUTPUT STREAMS
-            </div>
-
-            <div className="output-line">
-              <span>🛢 Oil</span>
-              <div></div>
-            </div>
-
-            <div className="output-line">
-              <span>🔥 Gas</span>
-              <div></div>
-            </div>
-
-            <div className="output-line">
-              <span>◆ Wax</span>
-              <div></div>
-            </div>
-
-            <div className="output-line">
-              <span>● Char</span>
-              <div></div>
-            </div>
-
-          </div>
-
-
-          <div className="side-card eco-card">
-
-            <span className="eco-icon">🌱</span>
-
-            <strong>CIRCULAR ECONOMY</strong>
-
-            <p>
-              Turning plastic waste into useful
-              resources through intelligent prediction.
+            <p className="result-note">
+              AI-based prototype estimates generated using the trained
+              pyrolysis model and literature data.
             </p>
 
-          </div>
+          </section>
+        )}
 
-        </aside>
-
-      </div>
-
+      </main>
 
       <footer>
-        <span>PYROCYCLE AI</span>
-        <span>•</span>
-        <span>AI-ASSISTED PYROLYSIS RESEARCH PROTOTYPE</span>
+        PyroCycle AI · AI-assisted plastic waste resource recovery
       </footer>
 
     </div>
