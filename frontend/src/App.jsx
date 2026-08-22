@@ -22,6 +22,18 @@ function App() {
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
 
+  // Change composition automatically when plastic type changes
+  const handlePlasticChange = (value) => {
+    setPlastic(value);
+
+    setHdpe(value === "HDPE" ? 100 : 0);
+    setLdpe(value === "LDPE" ? 100 : 0);
+    setPp(value === "PP" ? 100 : 0);
+    setPs(value === "PS" ? 100 : 0);
+    setPvc(value === "PVC" ? 100 : 0);
+    setPet(value === "PET" ? 100 : 0);
+  };
+
   const predict = async () => {
     setLoading(true);
     setResult(null);
@@ -41,10 +53,12 @@ function App() {
             PS_wt_percent: Number(ps),
             PVC_wt_percent: Number(pvc),
             PET_wt_percent: Number(pet),
+
             Temperature_C: Number(temperature),
             Heating_Rate_C_per_min: Number(heatingRate),
             Particle_Size_mm: Number(particleSize),
             Feed_Size_g: Number(feedSize),
+
             Catalyst: catalyst,
             Reactor_Type: reactorType,
           }),
@@ -56,8 +70,11 @@ function App() {
       }
 
       const data = await response.json();
+
       setResult(data);
     } catch (error) {
+      console.error(error);
+
       alert(
         "Unable to connect to the AI backend. Please make sure the backend is running."
       );
@@ -73,7 +90,9 @@ function App() {
       <header className="header">
         <div className="brand">
           <span className="brand-icon">♻</span>
-          <span>PyroCycle <strong>AI</strong></span>
+          <span>
+            PyroCycle <strong>AI</strong>
+          </span>
         </div>
 
         <p>AI-powered plastic waste resource recovery</p>
@@ -121,31 +140,81 @@ function App() {
               </div>
 
               <div className="material-list">
-                <div className="material active">
-                  <span></span> HDPE
+
+                <div
+                  className={`material ${
+                    plastic === "HDPE" ? "active" : ""
+                  }`}
+                  onClick={() => handlePlasticChange("HDPE")}
+                >
+                  <span></span>
+                  HDPE
                 </div>
 
-                <div className="material">
-                  <span></span> LDPE
+                <div
+                  className={`material ${
+                    plastic === "LDPE" ? "active" : ""
+                  }`}
+                  onClick={() => handlePlasticChange("LDPE")}
+                >
+                  <span></span>
+                  LDPE
                 </div>
 
-                <div className="material">
-                  <span></span> PP
+                <div
+                  className={`material ${
+                    plastic === "PP" ? "active" : ""
+                  }`}
+                  onClick={() => handlePlasticChange("PP")}
+                >
+                  <span></span>
+                  PP
                 </div>
 
-                <div className="material">
-                  <span></span> PS
+                <div
+                  className={`material ${
+                    plastic === "PS" ? "active" : ""
+                  }`}
+                  onClick={() => handlePlasticChange("PS")}
+                >
+                  <span></span>
+                  PS
                 </div>
+
+                <div
+                  className={`material ${
+                    plastic === "PVC" ? "active" : ""
+                  }`}
+                  onClick={() => handlePlasticChange("PVC")}
+                >
+                  <span></span>
+                  PVC
+                </div>
+
+                <div
+                  className={`material ${
+                    plastic === "PET" ? "active" : ""
+                  }`}
+                  onClick={() => handlePlasticChange("PET")}
+                >
+                  <span></span>
+                  PET
+                </div>
+
               </div>
             </div>
 
             <div className="side-card model-card">
-              <div className="model-icon">🧠</div>
+
+              <div className="model-icon">
+                🧠
+              </div>
 
               <div>
                 <h4>Random Forest</h4>
                 <p>Machine Learning Model</p>
               </div>
+
             </div>
 
           </aside>
@@ -157,6 +226,7 @@ function App() {
             <div className="predictor-top">
 
               <div>
+
                 <div className="mini-label">
                   PREDICTION ENGINE
                 </div>
@@ -167,6 +237,7 @@ function App() {
                   Configure your feedstock and process parameters to
                   estimate pyrolysis product yields.
                 </p>
+
               </div>
 
               <div className="ready-pill">
@@ -184,7 +255,9 @@ function App() {
 
               <select
                 value={plastic}
-                onChange={(e) => setPlastic(e.target.value)}
+                onChange={(e) =>
+                  handlePlasticChange(e.target.value)
+                }
               >
                 <option>HDPE</option>
                 <option>LDPE</option>
@@ -209,55 +282,90 @@ function App() {
 
               <div className="form-section">
                 <label>HDPE (%)</label>
+
                 <input
                   type="number"
+                  min="0"
+                  max="100"
                   value={hdpe}
-                  onChange={(e) => setHdpe(e.target.value)}
+                  onChange={(e) =>
+                    setHdpe(e.target.value)
+                  }
                 />
               </div>
+
 
               <div className="form-section">
                 <label>LDPE (%)</label>
+
                 <input
                   type="number"
+                  min="0"
+                  max="100"
                   value={ldpe}
-                  onChange={(e) => setLdpe(e.target.value)}
+                  onChange={(e) =>
+                    setLdpe(e.target.value)
+                  }
                 />
               </div>
+
 
               <div className="form-section">
                 <label>PP (%)</label>
+
                 <input
                   type="number"
+                  min="0"
+                  max="100"
                   value={pp}
-                  onChange={(e) => setPp(e.target.value)}
+                  onChange={(e) =>
+                    setPp(e.target.value)
+                  }
                 />
               </div>
+
 
               <div className="form-section">
                 <label>PS (%)</label>
+
                 <input
                   type="number"
+                  min="0"
+                  max="100"
                   value={ps}
-                  onChange={(e) => setPs(e.target.value)}
+                  onChange={(e) =>
+                    setPs(e.target.value)
+                  }
                 />
               </div>
+
 
               <div className="form-section">
                 <label>PVC (%)</label>
+
                 <input
                   type="number"
+                  min="0"
+                  max="100"
                   value={pvc}
-                  onChange={(e) => setPvc(e.target.value)}
+                  onChange={(e) =>
+                    setPvc(e.target.value)
+                  }
                 />
               </div>
 
+
               <div className="form-section">
                 <label>PET (%)</label>
+
                 <input
                   type="number"
+                  min="0"
+                  max="100"
                   value={pet}
-                  onChange={(e) => setPet(e.target.value)}
+                  onChange={(e) =>
+                    setPet(e.target.value)
+                  }
                 />
               </div>
 
@@ -275,40 +383,63 @@ function App() {
             <div className="form-grid">
 
               <div className="form-section">
+
                 <label>Temperature (°C)</label>
+
                 <input
                   type="number"
                   value={temperature}
-                  onChange={(e) => setTemperature(e.target.value)}
+                  onChange={(e) =>
+                    setTemperature(e.target.value)
+                  }
                 />
+
               </div>
 
+
               <div className="form-section">
+
                 <label>Heating Rate (°C/min)</label>
+
                 <input
                   type="number"
                   value={heatingRate}
-                  onChange={(e) => setHeatingRate(e.target.value)}
+                  onChange={(e) =>
+                    setHeatingRate(e.target.value)
+                  }
                 />
+
               </div>
 
+
               <div className="form-section">
+
                 <label>Particle Size (mm)</label>
+
                 <input
                   type="number"
                   step="0.1"
                   value={particleSize}
-                  onChange={(e) => setParticleSize(e.target.value)}
+                  onChange={(e) =>
+                    setParticleSize(e.target.value)
+                  }
                 />
+
               </div>
 
+
               <div className="form-section">
+
                 <label>Feed Size (g)</label>
+
                 <input
                   type="number"
                   value={feedSize}
-                  onChange={(e) => setFeedSize(e.target.value)}
+                  onChange={(e) =>
+                    setFeedSize(e.target.value)
+                  }
                 />
+
               </div>
 
             </div>
@@ -318,11 +449,14 @@ function App() {
             <div className="form-grid">
 
               <div className="form-section">
+
                 <label>Catalyst</label>
 
                 <select
                   value={catalyst}
-                  onChange={(e) => setCatalyst(e.target.value)}
+                  onChange={(e) =>
+                    setCatalyst(e.target.value)
+                  }
                 >
                   <option>None</option>
                   <option>Zeolite</option>
@@ -330,20 +464,26 @@ function App() {
                   <option>FCC</option>
                   <option>Alumina</option>
                 </select>
+
               </div>
 
+
               <div className="form-section">
+
                 <label>Reactor Type</label>
 
                 <select
                   value={reactorType}
-                  onChange={(e) => setReactorType(e.target.value)}
+                  onChange={(e) =>
+                    setReactorType(e.target.value)
+                  }
                 >
                   <option>Fixed Bed</option>
                   <option>Fluidized Bed</option>
                   <option>Batch Reactor</option>
                   <option>Rotary Kiln</option>
                 </select>
+
               </div>
 
             </div>
@@ -355,7 +495,10 @@ function App() {
               onClick={predict}
               disabled={loading}
             >
-              {loading ? "AI PROCESSING..." : "Predict Oil Yield"}
+              {loading
+                ? "AI PROCESSING..."
+                : "Predict Pyrolysis Yield"}
+
               {!loading && <span>→</span>}
             </button>
 
@@ -365,6 +508,7 @@ function App() {
           {/* RIGHT SIDEBAR */}
           <aside className="sidebar right-sidebar">
 
+            {/* PROCESS */}
             <div className="side-card">
 
               <div className="card-label">
@@ -375,31 +519,40 @@ function App() {
               <div className="process-list">
 
                 <div className="process-item">
+
                   <b>01</b>
+
                   <div>
                     <strong>Plastic Feed</strong>
                     <small>Waste material</small>
                   </div>
+
                 </div>
 
                 <div className="process-line"></div>
 
                 <div className="process-item">
+
                   <b>02</b>
+
                   <div>
                     <strong>Thermal Conversion</strong>
                     <small>Controlled heating</small>
                   </div>
+
                 </div>
 
                 <div className="process-line"></div>
 
                 <div className="process-item">
+
                   <b>03</b>
+
                   <div>
                     <strong>Product Separation</strong>
                     <small>Oil · Gas · Wax · Char</small>
                   </div>
+
                 </div>
 
               </div>
@@ -407,7 +560,7 @@ function App() {
             </div>
 
 
-            {/* OUTPUT CARD */}
+            {/* OUTPUT STREAMS */}
             <div className="side-card output-card">
 
               <div className="card-label">
@@ -438,9 +591,12 @@ function App() {
             </div>
 
 
+            {/* CIRCULAR ECONOMY */}
             <div className="side-card circular-card">
 
-              <div className="plant-icon">🌱</div>
+              <div className="plant-icon">
+                🌱
+              </div>
 
               <h3>CIRCULAR ECONOMY</h3>
 
@@ -458,57 +614,105 @@ function App() {
 
         {/* RESULTS */}
         {result && (
+
           <section className="results-card">
 
             <div className="result-header">
+
               <div>
-                <div className="mini-label">AI PREDICTION</div>
+
+                <div className="mini-label">
+                  AI PREDICTION
+                </div>
+
                 <h2>Pyrolysis Product Yields</h2>
+
               </div>
 
               <span className="result-badge">
                 MODEL OUTPUT
               </span>
+
             </div>
+
 
             <div className="results-grid">
 
+              {/* OIL */}
               <div className="result-box oil">
+
                 <span>🛢️</span>
+
                 <small>OIL</small>
-                <strong>{result.oil ?? result.Oil_Yield_percent ?? 0}%</strong>
+
+                <strong>
+                  {result.oil ?? 0}%
+                </strong>
+
               </div>
 
+
+              {/* GAS */}
               <div className="result-box gas">
+
                 <span>🔥</span>
+
                 <small>GAS</small>
-                <strong>{result.gas ?? result.Gas_Yield_percent ?? 0}%</strong>
+
+                <strong>
+                  {result.gas ?? 0}%
+                </strong>
+
               </div>
 
+
+              {/* WAX */}
               <div className="result-box wax">
+
                 <span>◆</span>
+
                 <small>WAX</small>
-                <strong>{result.wax ?? result.Wax_Yield_percent ?? 0}%</strong>
+
+                <strong>
+                  {result.wax ?? 0}%
+                </strong>
+
               </div>
 
+
+              {/* CHAR */}
               <div className="result-box char">
+
                 <span>▪</span>
+
                 <small>CHAR</small>
-                <strong>{result.char ?? result.Char_Yield_percent ?? 0}%</strong>
+
+                <strong>
+                  {result.char ?? 0}%
+                </strong>
+
               </div>
 
             </div>
 
+
             <p className="result-note">
-              AI-based prototype estimates generated using the trained
-              pyrolysis model and literature data.
+
+              Oil yield is predicted using the trained 325-row
+              literature model. Gas, wax and char are prototype
+              estimates based on polymer composition and process
+              conditions.
+
             </p>
 
           </section>
+
         )}
 
       </main>
 
+
+      {/* FOOTER */}
       <footer>
         PyroCycle AI · AI-assisted plastic waste resource recovery
       </footer>
