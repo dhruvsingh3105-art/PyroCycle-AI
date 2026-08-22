@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import WorkerApp from "./WorkerApp";
 import "./App.css";
 
 function App() {
@@ -21,6 +22,18 @@ function App() {
 
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [portal, setPortal] = useState(null);
+  const [pickupRequests, setPickupRequests] = useState([]);
+const [selectedPickupRequest, setSelectedPickupRequest] = useState(null);
+useEffect(() => {
+  if (portal === "industry") {
+    const requests = JSON.parse(
+      localStorage.getItem("pyrocyclePickupRequests") || "[]"
+    );
+
+    setPickupRequests(requests);
+  }
+}, [portal]);
 
   // Change composition automatically when plastic type changes
   const handlePlasticChange = (value) => {
@@ -82,10 +95,86 @@ function App() {
       setLoading(false);
     }
   };
+  // ===============================
+// PORTAL SELECTION
+// ===============================
+if (portal === null) {
+  return (
+    <div className="app">
+      <div className="portal-selection">
+
+        <div className="portal-header">
+          <div className="portal-logo">♻️</div>
+          <h1>PyroCycle AI</h1>
+          <p>AI-powered plastic recovery platform</p>
+        </div>
+
+        <div className="portal-content">
+          <h2>Choose your portal</h2>
+          <p>Select the experience designed for you</p>
+
+          <div className="portal-cards">
+
+            <button
+              className="portal-card worker-portal"
+              onClick={() => setPortal("worker")}
+            >
+              <span className="portal-icon">👷</span>
+
+              <div>
+                <h3>I'm a Worker</h3>
+                <p>
+                  Scan plastic, check its value,
+                  find buyers and request pickup.
+                </p>
+              </div>
+
+              <span className="portal-arrow">→</span>
+            </button>
+
+            <button
+              className="portal-card industry-portal"
+              onClick={() => setPortal("industry")}
+            >
+              <span className="portal-icon">🏭</span>
+
+              <div>
+                <h3>I'm an Industry User</h3>
+                <p>
+                  Predict pyrolysis yields and
+                  analyze plastic recovery.
+                </p>
+              </div>
+
+              <span className="portal-arrow">→</span>
+            </button>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  );
+}
+// ===============================
+// WORKER PORTAL
+// ===============================
+if (portal === "worker") {
+  return (
+    <WorkerApp
+      onBack={() => setPortal(null)}
+    />
+  );
+}
 
   return (
     <div className="app">
-
+      <button
+  className="portal-switch"
+  onClick={() => setPortal(null)}
+>
+  ⇄ Switch Portal
+</button>
       {/* HEADER */}
       <header className="header">
         <div className="brand">
@@ -216,12 +305,70 @@ function App() {
               </div>
 
             </div>
+            <div className="side-card pickup-request-card">
+
+  <div className="card-label">
+    <span>04</span>
+    PICKUP REQUESTS
+  </div>
+
+  {pickupRequests.filter(
+    (request) => request.status === "pending"
+  ).length === 0 ? (
+    <p className="no-requests">
+      No pending pickup requests.
+    </p>
+  ) : (
+    pickupRequests
+      .filter((request) => request.status === "pending")
+      .map((request) => (
+        <button
+          key={request.id}
+          className="pickup-request"
+          onClick={() => {
+  setSelectedPickupRequest(request);
+
+  setHdpe(request.composition.HDPE || 0);
+  setLdpe(request.composition.LDPE || 0);
+  setPp(request.composition.PP || 0);
+  setPs(request.composition.PS || 0);
+  setPvc(request.composition.PVC || 0);
+  setPet(request.composition.PET || 0);
+
+  setTemperature(request.temperature || 450);
+  setHeatingRate(request.heatingRate || 10);
+  setParticleSize(request.particleSize || 1);
+  setFeedSize(request.feedSize || 10);
+  setCatalyst(request.catalyst || "None");
+  setReactorType(request.reactorType || "Fixed Bed");
+
+  setResult(null);
+}}
+        >
+          <div className="pickup-request-name">
+  📦 {request.buyerName}
+</div>
+
+<div className="pickup-request-info">
+  <div>📍 {request.workerLocation}</div>
+  <div>⚖️ {request.weight} kg</div>
+</div>
+
+<div className="pickup-request-action">
+  View Request →
+</div>
+        </button>
+      ))
+  )}
+
+</div>
 
           </aside>
 
 
           {/* MAIN PREDICTOR */}
           <section className="predictor-card">
+            
 
             <div className="predictor-top">
 
