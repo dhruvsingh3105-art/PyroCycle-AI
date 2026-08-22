@@ -2,30 +2,24 @@ import { useState } from "react";
 import "./App.css";
 
 function App() {
-  const [form, setForm] = useState({
-    hdpe: 50,
-    ldpe: 0,
-    pp: 50,
-    ps: 0,
-    pvc: 0,
-    pet: 0,
-    temperature: 450,
-    heatingRate: 10,
-    particleSize: 1,
-    feedSize: 10,
-    catalyst: "None",
-    reactorType: "Fixed Bed",
-  });
+  const [plastic, setPlastic] = useState("HDPE");
+
+  const [hdpe, setHdpe] = useState(100);
+  const [ldpe, setLdpe] = useState(0);
+  const [pp, setPp] = useState(0);
+  const [ps, setPs] = useState(0);
+  const [pvc, setPvc] = useState(0);
+  const [pet, setPet] = useState(0);
+
+  const [temperature, setTemperature] = useState(450);
+  const [heatingRate, setHeatingRate] = useState(10);
+  const [particleSize, setParticleSize] = useState(1);
+  const [feedSize, setFeedSize] = useState(10);
+  const [catalyst, setCatalyst] = useState("None");
+  const [reactorType, setReactorType] = useState("Fixed Bed");
 
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
-
-  const handleChange = (e) => {
-    setForm({
-      ...form,
-      [e.target.name]: e.target.value,
-    });
-  };
 
   const predict = async () => {
     setLoading(true);
@@ -40,184 +34,238 @@ function App() {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            HDPE_wt_percent: Number(form.hdpe),
-            LDPE_wt_percent: Number(form.ldpe),
-            PP_wt_percent: Number(form.pp),
-            PS_wt_percent: Number(form.ps),
-            PVC_wt_percent: Number(form.pvc),
-            PET_wt_percent: Number(form.pet),
-            Temperature_C: Number(form.temperature),
-            Heating_Rate_C_per_min: Number(form.heatingRate),
-            Particle_Size_mm: Number(form.particleSize),
-            Feed_Size_g: Number(form.feedSize),
-            Catalyst: form.catalyst,
-            Reactor_Type: form.reactorType,
+            plastic_type: plastic,
+
+            HDPE_wt_percent: Number(hdpe),
+            LDPE_wt_percent: Number(ldpe),
+            PP_wt_percent: Number(pp),
+            PS_wt_percent: Number(ps),
+            PVC_wt_percent: Number(pvc),
+            PET_wt_percent: Number(pet),
+
+            temperature: Number(temperature),
+            heating_rate: Number(heatingRate),
+            particle_size: Number(particleSize),
+            feed_size: Number(feedSize),
+
+            catalyst: catalyst,
+            reactor_type: reactorType,
           }),
         }
       );
 
-      const data = await response.json();
-
       if (!response.ok) {
-        throw new Error(
-          data.details || data.error || "Prediction failed"
-        );
+        throw new Error("Backend request failed");
       }
+
+      const data = await response.json();
 
       setResult(data);
     } catch (error) {
-      console.error("Prediction error:", error);
-      alert("AI Error: " + error.message);
-    } finally {
-      setLoading(false);
+      console.error(error);
+      alert("Backend is not running or prediction failed!");
     }
+
+    setLoading(false);
   };
 
   return (
     <div className="app">
+
       <header>
         <h1>♻️ PyroCycle AI</h1>
         <p>AI-powered plastic waste resource recovery</p>
       </header>
 
       <main>
+
         <section className="card">
+
           <h2>AI Pyrolysis Predictor</h2>
 
-          <label>HDPE (%)</label>
-          <input
-            type="number"
-            name="hdpe"
-            value={form.hdpe}
-            onChange={handleChange}
-          />
+          <label>Plastic Type</label>
 
-          <label>LDPE (%)</label>
-          <input
-            type="number"
-            name="ldpe"
-            value={form.ldpe}
-            onChange={handleChange}
-          />
-
-          <label>PP (%)</label>
-          <input
-            type="number"
-            name="pp"
-            value={form.pp}
-            onChange={handleChange}
-          />
-
-          <label>PS (%)</label>
-          <input
-            type="number"
-            name="ps"
-            value={form.ps}
-            onChange={handleChange}
-          />
-
-          <label>PVC (%)</label>
-          <input
-            type="number"
-            name="pvc"
-            value={form.pvc}
-            onChange={handleChange}
-          />
-
-          <label>PET (%)</label>
-          <input
-            type="number"
-            name="pet"
-            value={form.pet}
-            onChange={handleChange}
-          />
-
-          <label>Temperature (°C)</label>
-          <input
-            type="number"
-            name="temperature"
-            value={form.temperature}
-            onChange={handleChange}
-          />
-
-          <label>Heating Rate (°C/min)</label>
-          <input
-            type="number"
-            name="heatingRate"
-            value={form.heatingRate}
-            onChange={handleChange}
-          />
-
-          <label>Particle Size (mm)</label>
-          <input
-            type="number"
-            step="0.1"
-            name="particleSize"
-            value={form.particleSize}
-            onChange={handleChange}
-          />
-
-          <label>Feed Size (g)</label>
-          <input
-            type="number"
-            name="feedSize"
-            value={form.feedSize}
-            onChange={handleChange}
-          />
-
-          <label>Catalyst</label>
           <select
-            name="catalyst"
-            value={form.catalyst}
-            onChange={handleChange}
+            value={plastic}
+            onChange={(e) => setPlastic(e.target.value)}
           >
-            <option>None</option>
-            <option>Zeolite</option>
-            <option>HZSM-5</option>
-            <option>Al2O3</option>
-            <option>CaCO3</option>
+            <option>HDPE</option>
+            <option>LDPE</option>
+            <option>PP</option>
+            <option>PS</option>
+            <option>PVC</option>
+            <option>PET</option>
           </select>
 
-          <label>Reactor Type</label>
+
+          <label>HDPE (%)</label>
+
+          <input
+            type="number"
+            value={hdpe}
+            onChange={(e) => setHdpe(e.target.value)}
+          />
+
+
+          <label>LDPE (%)</label>
+
+          <input
+            type="number"
+            value={ldpe}
+            onChange={(e) => setLdpe(e.target.value)}
+          />
+
+
+          <label>PP (%)</label>
+
+          <input
+            type="number"
+            value={pp}
+            onChange={(e) => setPp(e.target.value)}
+          />
+
+
+          <label>PS (%)</label>
+
+          <input
+            type="number"
+            value={ps}
+            onChange={(e) => setPs(e.target.value)}
+          />
+
+
+          <label>PVC (%)</label>
+
+          <input
+            type="number"
+            value={pvc}
+            onChange={(e) => setPvc(e.target.value)}
+          />
+
+
+          <label>PET (%)</label>
+
+          <input
+            type="number"
+            value={pet}
+            onChange={(e) => setPet(e.target.value)}
+          />
+
+
+          <label>Temperature (°C)</label>
+
+          <input
+            type="number"
+            value={temperature}
+            onChange={(e) => setTemperature(e.target.value)}
+          />
+
+
+          <label>Heating Rate (°C/min)</label>
+
+          <input
+            type="number"
+            value={heatingRate}
+            onChange={(e) => setHeatingRate(e.target.value)}
+          />
+
+
+          <label>Particle Size (mm)</label>
+
+          <input
+            type="number"
+            value={particleSize}
+            onChange={(e) => setParticleSize(e.target.value)}
+          />
+
+
+          <label>Feed Size (g)</label>
+
+          <input
+            type="number"
+            value={feedSize}
+            onChange={(e) => setFeedSize(e.target.value)}
+          />
+
+
+          <label>Catalyst</label>
+
           <select
-            name="reactorType"
-            value={form.reactorType}
-            onChange={handleChange}
+            value={catalyst}
+            onChange={(e) => setCatalyst(e.target.value)}
+          >
+            <option>None</option>
+            <option>HZSM-5</option>
+            <option>H-ZSM-5</option>
+            <option>Zeolite</option>
+            <option>FCC</option>
+          </select>
+
+
+          <label>Reactor Type</label>
+
+          <select
+            value={reactorType}
+            onChange={(e) => setReactorType(e.target.value)}
           >
             <option>Fixed Bed</option>
             <option>Fluidized Bed</option>
-            <option>Batch Reactor</option>
+            <option>Batch</option>
+            <option>Vacuum</option>
             <option>Rotary Kiln</option>
           </select>
 
+
           <button onClick={predict} disabled={loading}>
-            {loading ? "AI Processing..." : "Predict Oil Yield"}
+            {loading ? "AI Processing..." : "Predict Pyrolysis Yield"}
           </button>
+
         </section>
 
+
         {result && (
+
           <section className="results">
+
             <h2>AI Prediction</h2>
 
             <div className="results-grid">
-              <div>
+
+              <div className="result-card">
                 🛢️ Oil
-                <strong>
-                  {result.oil !== undefined
-                    ? result.oil
-                    : "N/A"}
-                  %
-                </strong>
+                <strong>{result.oil}%</strong>
               </div>
+
+              <div className="result-card">
+                🔥 Gas
+                <strong>{result.gas}%</strong>
+              </div>
+
+              <div className="result-card">
+                🟡 Wax
+                <strong>{result.wax}%</strong>
+              </div>
+
+              <div className="result-card">
+                ⚫ Char
+                <strong>{result.char}%</strong>
+              </div>
+
             </div>
 
             <p className="note">
-              AI-based oil yield estimate using the trained
-              pyrolysis model.
+              Oil yield is predicted using the 325-row
+              literature-trained AI model. Gas, wax and char
+              are prototype estimates derived from the predicted
+              oil yield.
             </p>
+
           </section>
+
         )}
+
       </main>
+
     </div>
   );
 }
