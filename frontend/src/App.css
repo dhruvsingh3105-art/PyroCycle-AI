@@ -795,6 +795,31 @@ footer {
     min-height: 110px;
   }
 }
+
+@media (max-width: 430px) {
+  .results-card {
+    padding: 20px;
+  }
+
+  .results-grid {
+    gap: 10px;
+  }
+
+  .result-box {
+    min-height: 118px;
+  }
+}
+
+@media (max-width: 375px) {
+  .results-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .result-box {
+    min-height: 112px;
+  }
+}
+
 /* =========================================
    PyroCycle AI PORTAL SELECTION
    ========================================= */
