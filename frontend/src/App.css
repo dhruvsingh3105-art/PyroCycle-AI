@@ -1605,3 +1605,23 @@ footer {
   color: #55e6a5;
   text-align: right;
 }
+
+@media (max-width: 600px) {
+  .portal-switch {
+    position: static;
+    display: block;
+    min-height: 44px;
+    margin: 12px 15px 0 auto;
+  }
+
+  .worker-page {
+    padding-top: 84px;
+  }
+
+  .worker-back {
+    top: 12px;
+    left: 12px;
+    min-height: 44px;
+    padding: 10px 12px;
+  }
+}
