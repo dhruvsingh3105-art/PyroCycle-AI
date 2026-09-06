@@ -722,11 +722,12 @@ footer {
 
 @media (max-width: 1050px) {
   .dashboard-grid {
-    grid-template-columns: 190px minmax(400px, 1fr) 190px;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     gap: 14px;
   }
 
   .predictor-card {
+    grid-column: 1 / -1;
     padding: 24px;
   }
 }
