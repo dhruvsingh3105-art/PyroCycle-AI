@@ -722,11 +722,12 @@ footer {
 
 @media (max-width: 1050px) {
   .dashboard-grid {
-    grid-template-columns: 190px minmax(400px, 1fr) 190px;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     gap: 14px;
   }
 
   .predictor-card {
+    grid-column: 1 / -1;
     padding: 24px;
   }
 }
@@ -794,6 +795,31 @@ footer {
     min-height: 110px;
   }
 }
+
+@media (max-width: 430px) {
+  .results-card {
+    padding: 20px;
+  }
+
+  .results-grid {
+    gap: 10px;
+  }
+
+  .result-box {
+    min-height: 118px;
+  }
+}
+
+@media (max-width: 375px) {
+  .results-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .result-box {
+    min-height: 112px;
+  }
+}
+
 /* =========================================
    PyroCycle AI PORTAL SELECTION
    ========================================= */
@@ -1248,7 +1274,7 @@ footer {
   min-height: 110px;
 
   display: grid;
-  grid-template-columns: 65px 1fr 25px;
+  grid-template-columns: 65px minmax(0, 1fr) 25px;
   align-items: center;
   gap: 15px;
 
@@ -1295,12 +1321,24 @@ footer {
   font-size: 14px;
 }
 
+.worker-action-card > div,
+.my-batches-card > div {
+  min-width: 0;
+}
+
+.worker-action-card h3,
+.worker-action-card p,
+.my-batches-card h3,
+.my-batches-card p {
+  overflow-wrap: anywhere;
+}
+
 .my-batches-card {
   margin-top: 20px;
   padding: 20px;
 
   display: grid;
-  grid-template-columns: 45px 1fr 25px;
+  grid-template-columns: 45px minmax(0, 1fr) 25px;
   align-items: center;
   gap: 15px;
 
@@ -1343,7 +1381,7 @@ footer {
   }
 
   .worker-action-card {
-    grid-template-columns: 50px 1fr 20px;
+    grid-template-columns: 50px minmax(0, 1fr) 20px;
   }
 }
 /* =========================
@@ -1405,6 +1443,46 @@ footer {
 .worker-secondary-button:hover {
   background: rgba(255,255,255,0.06);
 }
+
+.buyer-card,
+.batch-card {
+  margin-bottom: 16px;
+  padding: 20px;
+  border: 1px solid rgba(60, 220, 160, 0.2);
+  border-radius: 16px;
+}
+
+.buyer-card-name {
+  margin: 1em 0 8px;
+  overflow-wrap: anywhere;
+}
+
+.buyer-card p {
+  overflow-wrap: anywhere;
+}
+
+.batch-card-header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.batch-card-header h3 {
+  flex: 1 1 220px;
+  min-width: 0;
+  margin: 1em 0;
+  overflow-wrap: anywhere;
+}
+
+.batch-card-status {
+  flex: 0 1 auto;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  text-align: right;
+}
 /* =========================
    AI COMPOSITION + VALUE
    ========================= */
@@ -1420,6 +1498,7 @@ footer {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 16px;
   padding: 14px 16px;
   border-radius: 12px;
   background: rgba(255,255,255,0.05);
@@ -1429,10 +1508,32 @@ footer {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 16px;
   padding: 14px 16px;
   margin-top: 18px;
   border-radius: 12px;
   background: rgba(34,197,94,0.10);
+}
+
+.gross-value-box {
+  gap: 16px;
+}
+
+.composition-row > span,
+.confidence-box > span,
+.gross-value-box > span {
+  flex: 1 1 45%;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.composition-row > strong,
+.confidence-box > strong,
+.gross-value-box > strong {
+  flex: 1 1 55%;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  text-align: right;
 }
 
 .worker-warning {
@@ -1578,4 +1679,95 @@ footer {
   font-weight: 600;
   color: #55e6a5;
   text-align: right;
+}
+
+@media (max-width: 600px) {
+  .portal-switch {
+    position: static;
+    display: block;
+    width: fit-content;
+    min-height: 44px;
+    margin: 12px 15px 0 auto;
+  }
+
+  .worker-page {
+    padding-top: 84px;
+  }
+
+  .worker-back {
+    top: 12px;
+    left: 12px;
+    min-height: 44px;
+    padding: 10px 12px;
+  }
+
+  .composition-row,
+  .confidence-box,
+  .gross-value-box {
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .composition-row > span,
+  .confidence-box > span,
+  .gross-value-box > span {
+    flex-basis: 40%;
+  }
+
+  .composition-row > strong,
+  .confidence-box > strong,
+  .gross-value-box > strong {
+    flex-basis: 60%;
+  }
+}
+
+@media (max-width: 650px) {
+  .worker-tagline {
+    margin-bottom: 24px;
+  }
+
+  .value-section-title {
+    margin-top: 24px;
+  }
+
+  .gross-value-box {
+    margin-top: 18px;
+    padding: 16px;
+  }
+
+  .gross-value-box strong {
+    font-size: 18px;
+  }
+
+  .deduction-box {
+    margin-top: 16px;
+    padding: 16px;
+  }
+
+  .final-payout-box {
+    margin-top: 18px;
+    padding: 18px;
+  }
+
+  .final-payout-box strong {
+    font-size: 28px;
+  }
+}
+
+@media (max-width: 430px) {
+  .worker-container h1 {
+    font-size: 30px;
+  }
+
+  .worker-logo {
+    font-size: 50px;
+  }
+
+  .worker-logo.small {
+    font-size: 38px;
+  }
+
+  .final-payout-box strong {
+    font-size: 26px;
+  }
 }
