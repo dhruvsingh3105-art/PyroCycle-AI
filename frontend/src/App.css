@@ -1685,6 +1685,7 @@ footer {
   .portal-switch {
     position: static;
     display: block;
+    width: fit-content;
     min-height: 44px;
     margin: 12px 15px 0 auto;
   }
