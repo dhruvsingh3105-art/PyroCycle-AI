@@ -1719,3 +1719,54 @@ footer {
     flex-basis: 60%;
   }
 }
+
+@media (max-width: 650px) {
+  .worker-tagline {
+    margin-bottom: 24px;
+  }
+
+  .value-section-title {
+    margin-top: 24px;
+  }
+
+  .gross-value-box {
+    margin-top: 18px;
+    padding: 16px;
+  }
+
+  .gross-value-box strong {
+    font-size: 18px;
+  }
+
+  .deduction-box {
+    margin-top: 16px;
+    padding: 16px;
+  }
+
+  .final-payout-box {
+    margin-top: 18px;
+    padding: 18px;
+  }
+
+  .final-payout-box strong {
+    font-size: 28px;
+  }
+}
+
+@media (max-width: 430px) {
+  .worker-container h1 {
+    font-size: 30px;
+  }
+
+  .worker-logo {
+    font-size: 50px;
+  }
+
+  .worker-logo.small {
+    font-size: 38px;
+  }
+
+  .final-payout-box strong {
+    font-size: 26px;
+  }
+}
