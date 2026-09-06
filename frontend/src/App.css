@@ -1274,7 +1274,7 @@ footer {
   min-height: 110px;
 
   display: grid;
-  grid-template-columns: 65px 1fr 25px;
+  grid-template-columns: 65px minmax(0, 1fr) 25px;
   align-items: center;
   gap: 15px;
 
@@ -1321,12 +1321,24 @@ footer {
   font-size: 14px;
 }
 
+.worker-action-card > div,
+.my-batches-card > div {
+  min-width: 0;
+}
+
+.worker-action-card h3,
+.worker-action-card p,
+.my-batches-card h3,
+.my-batches-card p {
+  overflow-wrap: anywhere;
+}
+
 .my-batches-card {
   margin-top: 20px;
   padding: 20px;
 
   display: grid;
-  grid-template-columns: 45px 1fr 25px;
+  grid-template-columns: 45px minmax(0, 1fr) 25px;
   align-items: center;
   gap: 15px;
 
@@ -1369,7 +1381,7 @@ footer {
   }
 
   .worker-action-card {
-    grid-template-columns: 50px 1fr 20px;
+    grid-template-columns: 50px minmax(0, 1fr) 20px;
   }
 }
 /* =========================
@@ -1430,6 +1442,46 @@ footer {
 
 .worker-secondary-button:hover {
   background: rgba(255,255,255,0.06);
+}
+
+.buyer-card,
+.batch-card {
+  margin-bottom: 16px;
+  padding: 20px;
+  border: 1px solid rgba(60, 220, 160, 0.2);
+  border-radius: 16px;
+}
+
+.buyer-card-name {
+  margin: 1em 0 8px;
+  overflow-wrap: anywhere;
+}
+
+.buyer-card p {
+  overflow-wrap: anywhere;
+}
+
+.batch-card-header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.batch-card-header h3 {
+  flex: 1 1 220px;
+  min-width: 0;
+  margin: 1em 0;
+  overflow-wrap: anywhere;
+}
+
+.batch-card-status {
+  flex: 0 1 auto;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  text-align: right;
 }
 /* =========================
    AI COMPOSITION + VALUE

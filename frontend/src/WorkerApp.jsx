@@ -943,15 +943,10 @@ if (screen === "buyers") {
           {buyers.map((buyer) => (
             <div
               key={buyer.id}
-              style={{
-                border: "1px solid rgba(60, 220, 160, 0.2)",
-                borderRadius: "16px",
-                padding: "20px",
-                marginBottom: "16px",
-              }}
+              className="buyer-card"
             >
 
-              <h3 style={{ marginBottom: "8px" }}>
+              <h3 className="buyer-card-name">
                 {buyer.name}
               </h3>
 
@@ -1420,28 +1415,16 @@ if (screen === "batches") {
           {batches.map((batch) => (
             <div
               key={batch.id}
-              style={{
-                border: "1px solid rgba(60, 220, 160, 0.2)",
-                borderRadius: "16px",
-                padding: "20px",
-                marginBottom: "16px",
-              }}
+              className="batch-card"
             >
 
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  marginBottom: "12px",
-                }}
-              >
+              <div className="batch-card-header">
 
                 <h3>
                   📦 Batch #{batch.id}
                 </h3>
 
-                <span>
+                <span className="batch-card-status">
                   ✅ {batch.status}
                 </span>
 
