@@ -19,8 +19,10 @@ body {
 
 button,
 input,
-select {
+select,
+textarea {
   font: inherit;
+  color: inherit;
 }
 
 .app {
@@ -890,6 +892,7 @@ footer {
 
   text-align: left;
   cursor: pointer;
+  color: white;
 
   transition:
     transform 0.25s ease,
@@ -1344,6 +1347,7 @@ footer {
 
   border-radius: 18px;
   border: 1px solid rgba(255,255,255,0.1);
+  color: black;
 }
 
 .my-batches-card > span:first-child {
