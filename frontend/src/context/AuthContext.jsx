@@ -1,5 +1,7 @@
 import React, { createContext, useState, useEffect, useCallback } from 'react';
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
@@ -33,7 +35,7 @@ export const AuthProvider = ({ children }) => {
     }
 
     try {
-      const response = await fetch('http://localhost:5000/auth/refresh', {
+      const response = await fetch(`${API_URL}/auth/refresh`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${storedRefresh}`,
@@ -65,7 +67,7 @@ export const AuthProvider = ({ children }) => {
     }
 
     try {
-      const response = await fetch('http://localhost:5000/auth/me', {
+      const response = await fetch(`${API_URL}/auth/me`, {
         headers: {
           'Authorization': `Bearer ${curToken}`,
         },
@@ -79,7 +81,7 @@ export const AuthProvider = ({ children }) => {
         // Access token expired, attempt refresh
         const refreshedToken = await refreshAccessToken();
         if (refreshedToken) {
-          const retryRes = await fetch('http://localhost:5000/auth/me', {
+          const retryRes = await fetch(`${API_URL}/auth/me`, {
             headers: {
               'Authorization': `Bearer ${refreshedToken}`,
             },
@@ -121,7 +123,7 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     try {
-      const response = await fetch('http://localhost:5000/auth/login', {
+      const response = await fetch(`${API_URL}/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
@@ -150,7 +152,7 @@ export const AuthProvider = ({ children }) => {
 
   const register = async (email, password, role, name) => {
     try {
-      const response = await fetch('http://localhost:5000/auth/register', {
+      const response = await fetch(`${API_URL}/auth/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password, role, name }),
